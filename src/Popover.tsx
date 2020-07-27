@@ -14,6 +14,7 @@ class Popover extends React.Component<PopoverProps, PopoverState> {
   private positionOrder: Position[] = undefined;
   private willUnmount = false;
   private willMount = false;
+  private isOpening = false;
   private removePopoverTimeout: number;
   public static defaultProps: Partial<PopoverProps> = {
     padding: Constants.DEFAULT_PADDING,
@@ -53,6 +54,7 @@ class Popover extends React.Component<PopoverProps, PopoverState> {
 
     this.willUnmount = false;
     this.willMount = true;
+    this.isOpening = false;
   }
 
   public componentDidMount() {
@@ -118,7 +120,8 @@ class Popover extends React.Component<PopoverProps, PopoverState> {
       !this.popoverDiv.contains(e.target as Node) &&
       !this.targetRef.current.contains(e.target as Node) &&
       onClickOutside &&
-      isOpen
+      isOpen &&
+      !this.isOpening
     ) {
       onClickOutside(e);
     }
@@ -259,6 +262,9 @@ class Popover extends React.Component<PopoverProps, PopoverState> {
       window.addEventListener('resize', this.onResize);
       window.addEventListener('click', this.onClick);
       this.renderPopover();
+
+      this.isOpening = true;
+      window.setTimeout(() => (this.isOpening = false));
     } else {
       this.removePopover();
     }
