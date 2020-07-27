@@ -40,6 +40,7 @@ var Popover = /** @class */ (function (_super) {
         _this.positionOrder = undefined;
         _this.willUnmount = false;
         _this.willMount = false;
+        _this.isOpening = false;
         _this.onClick = function (e) {
             var _a = _this.props, onClickOutside = _a.onClickOutside, isOpen = _a.isOpen;
             if (!_this.willUnmount &&
@@ -47,7 +48,8 @@ var Popover = /** @class */ (function (_super) {
                 !_this.popoverDiv.contains(e.target) &&
                 !_this.targetRef.current.contains(e.target) &&
                 onClickOutside &&
-                isOpen) {
+                isOpen &&
+                !_this.isOpening) {
                 onClickOutside(e);
             }
         };
@@ -61,6 +63,7 @@ var Popover = /** @class */ (function (_super) {
         };
         _this.willUnmount = false;
         _this.willMount = true;
+        _this.isOpening = false;
         return _this;
     }
     Popover.getDerivedStateFromProps = function (props, state) {
@@ -198,6 +201,7 @@ var Popover = /** @class */ (function (_super) {
         return container;
     };
     Popover.prototype.updatePopover = function (isOpen) {
+        var _this = this;
         if (isOpen && this.targetRef) {
             if (!this.popoverDiv || !this.popoverDiv.parentNode) {
                 var transitionDuration = this.props.transitionDuration;
@@ -209,6 +213,8 @@ var Popover = /** @class */ (function (_super) {
             window.addEventListener('resize', this.onResize);
             window.addEventListener('click', this.onClick);
             this.renderPopover();
+            this.isOpening = true;
+            window.setTimeout(function () { return (_this.isOpening = false); });
         }
         else {
             this.removePopover();
